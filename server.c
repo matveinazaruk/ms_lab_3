@@ -9,7 +9,7 @@
 #define LENGTH 1024
 #define _SERVER_USING_THREADS_
 
-void error(char *msg)
+void error (char *msg)
 {
     perror(msg);
     exit(1);
@@ -23,7 +23,7 @@ typedef struct str_thdata
 
 
 
-int create_connection(int portno)
+int create_connection (int portno)
 {
     int sockfd;
     struct sockaddr_in serv_addr;
@@ -32,7 +32,7 @@ int create_connection(int portno)
     if (sockfd < 0)
        error("ERROR opening socket");
 
-    bzero((char *) &serv_addr, sizeof(serv_addr));
+    bzero((char *) &serv_addr, sizeof (serv_addr));
 
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
@@ -44,7 +44,7 @@ int create_connection(int portno)
     return sockfd;
 }
 
-int get_client_connect(int socket_d)
+int get_client_connect (int socket_d)
 {
     struct sockaddr_in client;
     int client_len, cli_d;
@@ -54,7 +54,7 @@ int get_client_connect(int socket_d)
     return cli_d;
 }
 
-void write_to_socket(void *ptr)
+void write_to_socket (void *ptr)
 {
    FILE* f;
    char data[LENGTH];
@@ -64,19 +64,19 @@ void write_to_socket(void *ptr)
    printf("gotovims9 otpravit %s\nconnection - %d\n",arg->name,arg->connection);
    f = fopen(arg->name, "r");
    if(f == NULL) error("failik is not open");
-   fseek (f, 0 , SEEK_END);
+   fseek (f, 0, SEEK_END);
    fileSize = ftell (f);
    rewind (f);
    snprintf(data, LENGTH, "%ld", fileSize);
    send(arg->connection, data, 1024, 0);
    while(size < fileSize){
        int read = 0,sent = 0;
-       read = fread(data,1,LENGTH,f);
-       sent = send(arg->connection, data, read, 0 );
+       read = fread(data, 1, LENGTH, f);
+       sent = send(arg->connection, data, read, 0);
        size+= sent;
    }
 
-   printf("size of %ld",size);
+   printf("size of %ld", size);
    close(arg->connection);
 }
 
@@ -86,11 +86,11 @@ int main(int argc, char *argv[])
     int my_socket, n, connection;
     char buffer[256];
     my_socket = create_connection(atoi(argv[1]));
-    bzero(buffer,256);
+    bzero(buffer, 256);
     while(1){
         pthread_t pthr;
         thrdata data;
-        bzero(buffer,256);
+        bzero(buffer, 256);
         connection = get_client_connect(my_socket);
 
         recv(connection, buffer, 256, 0);
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
         pthread_create(&pthr, NULL, (void *) &write_to_socket,(void *)&data);
 #else
         pid_t childPid = fork();
-        if (childPid == 0){
+        if (childPid == 0) {
             write_to_socket((void*)&data);
             exit(0);
         }

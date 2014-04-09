@@ -29,7 +29,7 @@ int get_connect(char * server_name, int portno){
          (char *)&serv_addr.sin_addr.s_addr,
          server->h_length);
     serv_addr.sin_port = htons(portno);
-    if (connect(sockfd,(struct sockaddr *)&serv_addr,sizeof(serv_addr)) < 0)
+    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
         error("ERROR connecting");
     return sockfd;
 }
@@ -42,21 +42,20 @@ int main(int argc, char *argv[])
     char buffer[LENGTH];
     printf("start\n");
     portno = atoi(argv[2]);
-    sockfd = get_connect(argv[1],portno);
-    printf("connected %d",sizeof(argv[3]));
+    sockfd = get_connect(argv[1], portno);
     puts(argv[3]);
-    bzero(buffer,LENGTH);
+    bzero(buffer, LENGTH);
 
     send(sockfd, argv[3], strlen(argv[3]), 0);
     recv(sockfd, buffer, LENGTH, 0);
     fileSize = atoi(buffer);
     readSize = 0;
     bzero(buffer,LENGTH);
-    while (readSize< fileSize) {
+    while (readSize < fileSize) {
         int r = recv(sockfd, buffer, LENGTH, 0);
         readSize += r;
         fwrite(buffer, 1, r, file);
     }
-    printf("read size%d\n filesize %d\n",readSize,fileSize);
+    printf("read size %d\n filesize %d\n", readSize, fileSize);
     return 0;
 }
